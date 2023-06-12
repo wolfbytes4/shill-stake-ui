@@ -1,0 +1,9 @@
+node_modules
+jsons
+dockercommands.txt
+.env
+.env.localsecret 
+.env.mainnet 
+.env.testnet 
+nginx.conf
+dist

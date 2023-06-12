@@ -1,0 +1,46 @@
+// Global styles
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #f6f0ff;
+  font-family: $primary-font-family;
+  color: $primary-text-color;
+}
+
+a {
+  text-decoration: none;
+  color: $primary-text-color;
+}
+
+li {
+  list-style-type: none;
+}
+
+button,
+input,
+textarea,
+select {
+  outline: none;
+  border: none;
+  background: none;
+  font-family: $primary-font-family;
+  color: $primary-text-color;
+}
+
+button,
+select {
+  cursor: pointer;
+}
+
+img {
+  user-select: none;
+  pointer-events: none;
+}

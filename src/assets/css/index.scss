@@ -1,0 +1,15 @@
+// Partials
+@import "./partials/variables";
+@import "./partials/global-styles";
+@import "./partials/custom-classes";
+
+// Components
+@import "./components/navigation-bar-component";
+@import "./components/footer-component";
+@import "./components/wallet-change-dialog";
+
+// Pages
+@import "./pages/landing-page";
+@import "./pages/app-page";
+@import "./pages/app-dashboard-page";
+@import "./pages/app-pools-info-page";
