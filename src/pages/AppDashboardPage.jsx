@@ -66,10 +66,9 @@ const AppDashboardPage = ({ title, wClient }) => {
       import.meta.env.VITE_APP_STAKE_MANAGER_CONTRACT_HASH
     ).catch((err) => {
       setIsQueryError(true);
+      setIsLoading(false);
     });
 
-    console.log("here");
-    console.log(data);
     setContractsInfo(data);
     if (data.length > 0) {
       selectPool(data[0], 0);
@@ -132,6 +131,9 @@ const AppDashboardPage = ({ title, wClient }) => {
             : (parseInt(myInfo.staked.staked_amount) /
                 parseInt(contract.staked_info.total_staked_amount)) *
               100;
+        myInfo.percent = myInfo.percent
+          ? myInfo.percent.toFixed(2)
+          : myInfo.percent;
       }
     }
 
