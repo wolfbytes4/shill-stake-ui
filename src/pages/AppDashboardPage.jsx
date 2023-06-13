@@ -134,6 +134,9 @@ const AppDashboardPage = ({ title, wClient }) => {
         myInfo.percent = myInfo.percent
           ? myInfo.percent.toFixed(2)
           : myInfo.percent;
+
+        myInfo.estimated_rewards =
+          contract.staked_info.total_rewards > 0 ? myInfo.estimated_rewards : 0;
       }
     }
 
