@@ -8,6 +8,7 @@ import {
   queryWrapper,
   queryMyInfo,
   queryPaymentTokenBalance,
+  queryOwnedTokens,
 } from "../helpers/queryhelper";
 import { txWrapper } from "../helpers/txhelper";
 import { ToastContainer, toast } from "react-toastify";
@@ -16,6 +17,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { faKey } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import CircularProgress from "@mui/material/CircularProgress";
+import SelectNftDialog from "../components/selectnftdialog/selectnftdialog";
 // App dashboard page
 const AppDashboardPage = ({ title, wClient }) => {
   // Title
@@ -27,7 +29,7 @@ const AppDashboardPage = ({ title, wClient }) => {
 
   // States
   const [walletClient, setWalletClient] = useState();
-  const [activePool, setActivePool] = useState(1);
+  const [activePool, setActivePool] = useState(0);
   const [poolType, setPoolType] = useState();
   const [selectedContract, setSelectedContract] = useState();
   const [contractsInfo, setContractsInfo] = useState([]);
@@ -44,21 +46,45 @@ const AppDashboardPage = ({ title, wClient }) => {
   const [hasBalanceError, setHasBalanceError] = useState(false);
   const [isBalanceLoading, setIsBalanceLoading] = useState(true);
   const [depositAmount, setDepositAmount] = useState();
+  const [ownedTokens, setOwnedTokens] = useState([]);
+  const images = {
+    SHILL: "/images/pages/app-dashboard-page/hero-section-img-1.png",
+    Shillables: "/images/pages/landing-page/nfts-section-img-1.png",
+    "Wolf Pack Alphas": "/images/pages/landing-page/nfts-section-img-5.png",
+    "Broke Badgers": "/images/pages/landing-page/nfts-section-img-2.png",
+    Alphacas: "/images/pages/landing-page/nfts-section-img-3.png",
+    Boonanas: "/images/pages/landing-page/nfts-section-img-4.png",
+    Bananappeals: "/images/pages/landing-page/nfts-section-img-6.png",
+    "Sly Foxes": "/images/pages/landing-page/nfts-section-img-7.png",
+  };
 
-  const getData = async () => {
+  let contractPermit = null;
+
+  const getData = async (reload) => {
+    const wc = await getWalletClient();
+    setWalletClient(wc);
     setIsQueryError(false);
     setIsLoading(true);
-    const contractsInfo = await getContractsInfo();
+    const contractsInfo = await getContractsInfo(reload);
+
     if (contractsInfo.length > 0) {
-      await getMyInfo(contractsInfo[0]);
+      const permitError = await tryGetPermit(contractsInfo[activePool]);
+      if (!permitError) {
+        await getMyInfo(contractsInfo[activePool]);
+      }
     }
     setIsLoading(false);
-    await loadBalance(
-      contractsInfo[0].staked_info.staking_contract.address,
-      contractsInfo[0].staked_info.staking_contract.code_hash
-    );
+    if (
+      contractsInfo[activePool].staked_info.staking_contract.stake_type ===
+      "token"
+    ) {
+      await loadBalance(
+        contractsInfo[activePool].staked_info.staking_contract.address,
+        contractsInfo[activePool].staked_info.staking_contract.code_hash
+      );
+    }
   };
-  const getContractsInfo = async () => {
+  const getContractsInfo = async (reload) => {
     const q = { get_contracts_with_info: {} };
     const data = await queryWrapper(
       q,
@@ -71,16 +97,20 @@ const AppDashboardPage = ({ title, wClient }) => {
 
     setContractsInfo(data);
     if (data.length > 0) {
-      selectPool(data[0], 0);
+      selectPool(data[activePool], activePool, reload);
     }
     return data;
   };
 
   const tryResetPermit = async (contract) => {
-    const wc = await getWalletClient();
+    const additional_address =
+      contract.staked_info.staking_contract.stake_type === "nft"
+        ? contract.staked_info.staking_contract.address
+        : null;
     const permit = await resetPermit(
-      wc.address,
-      contract.contract_info.address
+      walletClient.address,
+      contract.contract_info.address,
+      additional_address
     ).catch((err) => {
       setIsPermitError(true);
     });
@@ -93,55 +123,78 @@ const AppDashboardPage = ({ title, wClient }) => {
     }
   };
 
-  const getMyInfo = async (contract) => {
+  const tryGetPermit = async (contract) => {
     const wc = await getWalletClient();
     setIsPermitError(false);
-    setIsQueryError(false);
-    let queryError = false;
     let permitError = false;
-    let myInfo = null;
-
+    const additional_address =
+      contract.staked_info.staking_contract.stake_type === "nft"
+        ? contract.staked_info.staking_contract.address
+        : null;
     const permit = await getPermit(
       wc.address,
-      contract.contract_info.address
+      contract.contract_info.address,
+      additional_address
     ).catch((err) => {
       permitError = true;
-      myInfo = null;
     });
-
     if (permit && Object.keys(permit).length === 0) {
       permitError = true;
     }
 
+    setIsPermitError(permitError);
     if (!permitError) {
-      myInfo = await queryMyInfo(permit, contract.contract_info).catch(
-        (err) => {
-          if (typeof err === "object" && err.isPermitError) {
-            permitError = true;
-          } else {
-            queryError = true;
-          }
-        }
-      );
+      contractPermit = permit;
+    }
+    return permitError;
+  };
 
-      if (myInfo) {
-        myInfo.percent =
-          parseInt(contract.staked_info.total_staked_amount) === 0
-            ? 0
-            : (parseInt(myInfo.staked.staked_amount) /
-                parseInt(contract.staked_info.total_staked_amount)) *
-              100;
-        myInfo.percent = myInfo.percent
-          ? myInfo.percent.toFixed(2)
-          : myInfo.percent;
+  const getMyInfo = async (contract) => {
+    setIsQueryError(false);
+    let queryError = false;
+    let myInfo = null;
+    let permitError = false;
 
+    // const permit = await getPermit(
+    //   wc.address,
+    //   contract.contract_info.address
+    // ).catch((err) => {
+    //   permitError = true;
+    //   myInfo = null;
+    // });
+
+    // if (permit && Object.keys(permit).length === 0) {
+    //   permitError = true;
+    // }
+
+    // if (!permitError) {
+    myInfo = await queryMyInfo(contractPermit, contract).catch((err) => {
+      if (typeof err === "object" && err.isPermitError) {
+        permitError = true;
+      } else {
+        queryError = true;
+      }
+    });
+
+    if (myInfo) {
+      myInfo.percent =
+        parseInt(contract.staked_info.total_staked_amount) === 0
+          ? 0
+          : (parseInt(myInfo.staked.staked_amount) /
+              parseInt(contract.staked_info.total_staked_amount)) *
+            100;
+      myInfo.percent = myInfo.percent
+        ? myInfo.percent.toFixed(2)
+        : myInfo.percent;
+      if (myInfo.estimated_rewards && contract.staked_info.total_rewards) {
         myInfo.estimated_rewards =
-          myInfo.estimated_rewards < contract.staked_info.total_rewards
+          parseInt(myInfo.estimated_rewards) <
+          parseInt(contract.staked_info.total_rewards)
             ? myInfo.estimated_rewards
-            : 0;
+            : "0";
       }
     }
-
+    //}
     setIsPermitError(permitError);
     setIsQueryError(queryError);
     setMyInfo(myInfo);
@@ -165,7 +218,7 @@ const AppDashboardPage = ({ title, wClient }) => {
       selectedContract.contract_info.code_hash,
       250_000,
       true,
-      await getWalletClient()
+      walletClient
     ).catch((err) => {
       toast.dismiss();
       toast.error(err.message, {
@@ -193,7 +246,7 @@ const AppDashboardPage = ({ title, wClient }) => {
         progress: undefined,
         theme: "dark",
       });
-      getData();
+      getData(true);
       await loadBalance(
         selectedContract.staked_info.staking_contract.address,
         selectedContract.staked_info.staking_contract.code_hash
@@ -219,7 +272,7 @@ const AppDashboardPage = ({ title, wClient }) => {
       selectedContract.contract_info.code_hash,
       250_000,
       true,
-      await getWalletClient()
+      walletClient
     ).catch((err) => {
       toast.dismiss();
       toast.error(err.message, {
@@ -247,7 +300,8 @@ const AppDashboardPage = ({ title, wClient }) => {
         progress: undefined,
         theme: "dark",
       });
-      getData();
+      debugger;
+      getData(true);
     }
   };
 
@@ -323,7 +377,7 @@ const AppDashboardPage = ({ title, wClient }) => {
         selectedContract.staked_info.staking_contract.code_hash,
         250_000,
         true,
-        await getWalletClient()
+        walletClient
       ).catch((err) => {
         toast.dismiss();
         toast.error(err.message, {
@@ -352,7 +406,7 @@ const AppDashboardPage = ({ title, wClient }) => {
           theme: "dark",
         });
         setDepositAmount(0);
-        getData();
+        selectPool(selectedContract, activePool, true);
         await loadBalance(
           selectedContract.staked_info.staking_contract.address,
           selectedContract.staked_info.staking_contract.code_hash
@@ -360,6 +414,80 @@ const AppDashboardPage = ({ title, wClient }) => {
       }
     }
   };
+
+  const depositNfts = async () => {
+    debugger;
+    const selectedTokens = ownedTokens
+      .filter((nft) => nft.isSelected)
+      .map((nft) => nft.token_id);
+
+    if (selectedContract && poolType === "nft" && selectedTokens.length > 0) {
+      toast.loading("Depositing NFTs", {
+        position: "bottom-right",
+        autoClose: false,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+
+      const txMsg = {
+        batch_send_nft: {
+          sends: [
+            {
+              contract: selectedContract.contract_info.address,
+              receiver_info: {
+                recipient_code_hash: selectedContract.contract_info.code_hash,
+                also_implements_batch_receive_nft: true,
+              },
+              token_ids: selectedTokens,
+            },
+          ],
+        },
+      };
+
+      const res = await txWrapper(
+        txMsg,
+        selectedContract.staked_info.staking_contract.address,
+        selectedContract.staked_info.staking_contract.code_hash,
+        250_000,
+        true,
+        walletClient
+      ).catch((err) => {
+        toast.dismiss();
+        toast.error(err.message, {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      });
+
+      if (res) {
+        //show success message
+        toast.dismiss();
+        toast.success("Successfully Deposited", {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+        resetSelected();
+        getData(true);
+      }
+    }
+  };
+
   const queryBalance = async (vk, contract_address, hash) => {
     const wc = await getWalletClient();
     if (wc && wc.address) {
@@ -379,10 +507,60 @@ const AppDashboardPage = ({ title, wClient }) => {
     }
   };
 
-  const selectPool = (contract, index) => {
+  const setMyTokens = async (contract) => {
+    const wc = await getWalletClient();
+    const myTokens = await queryOwnedTokens(
+      wc.address,
+      contractPermit,
+      contract.staked_info.staking_contract.address,
+      contract.staked_info.staking_contract.code_hash,
+      [
+        contract.contract_info.address,
+        contract.staked_info.staking_contract.address,
+      ]
+    );
+    const tokenList = myTokens.map((tokenId) => {
+      return {
+        token_id: tokenId,
+        isSelected: false,
+      };
+    });
+    setOwnedTokens(tokenList);
+  };
+
+  const selectPool = async (contract, index, reload) => {
     setActivePool(index);
     setPoolType(contract.staked_info.staking_contract.stake_type);
     setSelectedContract(contract);
+    if (reload) {
+      const permitError = await tryGetPermit(contract);
+      if (!permitError) {
+        getMyInfo(contract);
+      }
+      if (contract.staked_info.staking_contract.stake_type === "nft") {
+        setMyTokens(contract);
+      }
+    }
+  };
+  const selectNft = (index) => {
+    if (!ownedTokens[index].cantSelect) {
+      const updatedTokens = [...ownedTokens];
+      updatedTokens[index].isSelected = !updatedTokens[index].isSelected;
+      setOwnedTokens(updatedTokens);
+    }
+  };
+  const resetSelected = () => {
+    const updatedTokens = [...ownedTokens];
+    updatedTokens.forEach((nft) => {
+      nft.isSelected = false;
+    });
+    setOwnedTokens(updatedTokens);
+  };
+
+  const updateCantSelectNft = (index, cantSelect) => {
+    const updatedTokens = [...ownedTokens];
+    updatedTokens[index].cantSelect = cantSelect;
+    setOwnedTokens(updatedTokens);
   };
   return (
     <main className="app-dashboard-page">
@@ -410,10 +588,12 @@ const AppDashboardPage = ({ title, wClient }) => {
 
                   <h3>
                     {selectedContract.staked_info.total_staked_amount > 0
-                      ? selectedContract.staked_info.total_staked_amount?.slice(
-                          0,
-                          -6
-                        )
+                      ? poolType === "token"
+                        ? selectedContract.staked_info.total_staked_amount?.slice(
+                            0,
+                            -6
+                          )
+                        : selectedContract.staked_info.total_staked_amount
                       : 0}{" "}
                     {selectedContract.staked_info.staking_contract
                       .stake_type === "token"
@@ -473,61 +653,13 @@ const AppDashboardPage = ({ title, wClient }) => {
                 <div className="tab-nav-btns">
                   {contractsInfo.map((contract, index) => (
                     <button
-                      onClick={() => selectPool(contract, index)}
+                      onClick={() => selectPool(contract, index, true)}
                       className={activePool === index && "active"}
                     >
                       {contract.contract_info.stake_type === "token" ? "$" : ""}
                       {contract.staked_info.staking_contract.name}
                     </button>
                   ))}
-                  {/* <button
-                    onClick={() => setActivePool(2)}
-                    className={activePool === 2 && "active"}
-                  >
-                    Shillables NFT
-                  </button>
-
-                  <button
-                    onClick={() => setActivePool(3)}
-                    className={activePool === 3 && "active"}
-                  >
-                    Broke Badgers
-                  </button>
-
-                  <button
-                    onClick={() => setActivePool(4)}
-                    className={activePool === 4 && "active"}
-                  >
-                    Alphacas
-                  </button>
-
-                  <button
-                    onClick={() => setActivePool(5)}
-                    className={activePool === 5 && "active"}
-                  >
-                    Boonanas
-                  </button>
-
-                  <button
-                    onClick={() => setActivePool(6)}
-                    className={activePool === 6 && "active"}
-                  >
-                    Wolf Pack
-                  </button>
-
-                  <button
-                    onClick={() => setActivePool(7)}
-                    className={activePool === 7 && "active"}
-                  >
-                    Bananappeals
-                  </button>
-
-                  <button
-                    onClick={() => setActivePool(8)}
-                    className={activePool === 8 && "active"}
-                  >
-                    Sly Foxes
-                  </button> */}
                 </div>
               </div>
 
@@ -545,16 +677,34 @@ const AppDashboardPage = ({ title, wClient }) => {
                 </div>
 
                 <div className="table-box-rows">
-                  {poolType === "token" && myInfo && (
+                  {myInfo && (
                     <div className="table-box-row">
                       <div className="content">
                         <div className="asset">
-                          <img
-                            src="/images/pages/app-dashboard-page/hero-section-img-1.png"
-                            alt=""
-                          />
+                          {selectedContract && (
+                            <img
+                              src={
+                                images[
+                                  selectedContract.staked_info.staking_contract
+                                    .name
+                                ]
+                              }
+                              alt=""
+                            />
+                          )}
 
-                          <h3>$SHILL</h3>
+                          <h3>
+                            {selectedContract && (
+                              <>
+                                {selectedContract.staked_info.staking_contract
+                                  .stake_type === "token" && <>$</>}
+                                {
+                                  selectedContract.staked_info.staking_contract
+                                    .name
+                                }
+                              </>
+                            )}
+                          </h3>
                         </div>
 
                         <p>
@@ -578,7 +728,20 @@ const AppDashboardPage = ({ title, wClient }) => {
                           </span>{" "}
                           {myInfo.staked && (
                             <div>
-                              {myInfo.staked.staked_amount?.slice(0, -6)} $SHILL
+                              {selectedContract.staked_info.staking_contract
+                                .stake_type === "token" && (
+                                <>
+                                  {myInfo.staked.staked_amount?.slice(0, -6)} $
+                                  {
+                                    selectedContract.staked_info
+                                      .staking_contract.name
+                                  }
+                                </>
+                              )}
+                              {selectedContract.staked_info.staking_contract
+                                .stake_type === "nft" && (
+                                <>{myInfo.staked.staked_amount} NFTs</>
+                              )}
                             </div>
                           )}
                         </p>
@@ -588,73 +751,118 @@ const AppDashboardPage = ({ title, wClient }) => {
 
                       <div className="manage">
                         <div className="boxes">
-                          <div className="box">
-                            <div className="box-content">
-                              <h3>Deposit</h3>
-
-                              <div className="row">
-                                <p class="balance">
-                                  <p>
-                                    Wallet balance:
-                                    {isBalanceLoading &&
-                                      !hasBalanceError &&
-                                      hasVk && (
-                                        <div className="balance-loading">
-                                          <CircularProgress></CircularProgress>
-                                        </div>
-                                      )}{" "}
-                                  </p>
-                                  {(!hasVk || hasBalanceError) &&
-                                    !isBalanceLoading && (
-                                      <FontAwesomeIcon
-                                        icon={faKey}
-                                        className="key-icon"
-                                        onClick={() => handleVK()}
-                                      />
-                                    )}
-                                  {hasVk && !hasBalanceError && (
-                                    <p className="info-value">
-                                      {shillBalance || 0} $SHILL
+                          {poolType === "token" && (
+                            <div className="box">
+                              <div className="box-content">
+                                <h3>Deposit</h3>
+                                <div className="row">
+                                  <p class="balance">
+                                    <p>
+                                      Wallet balance:
+                                      {isBalanceLoading &&
+                                        !hasBalanceError &&
+                                        hasVk && (
+                                          <div className="balance-loading">
+                                            <CircularProgress></CircularProgress>
+                                          </div>
+                                        )}{" "}
+                                      {(!hasVk || hasBalanceError) &&
+                                        !isBalanceLoading && (
+                                          <FontAwesomeIcon
+                                            icon={faKey}
+                                            className="key-icon"
+                                            onClick={() => handleVK()}
+                                          />
+                                        )}
+                                      {hasVk && !hasBalanceError && (
+                                        <>{shillBalance || 0} $SHILL</>
+                                      )}
                                     </p>
-                                  )}
-                                </p>
-                                {/* <p>Wallet balance: 0 $SHILL</p> */}
+                                  </p>
+                                  {/* <p>Wallet balance: 0 $SHILL</p> */}
 
-                                <span
-                                  onClick={(e) => setMaxDeposit()}
-                                  className="max-deposit"
-                                >
-                                  MAX
-                                </span>
+                                  <span
+                                    onClick={(e) => setMaxDeposit()}
+                                    className="max-deposit"
+                                  >
+                                    MAX
+                                  </span>
+                                </div>
+                                <input
+                                  type="number"
+                                  placeholder="0.00"
+                                  value={depositAmount}
+                                  onChange={(e) =>
+                                    setDepositAmount(e.target.value)
+                                  }
+                                />
+                                {!shillBalance ||
+                                  (parseInt(depositAmount) >
+                                    parseInt(shillBalance) && (
+                                    <span className="low-funds">
+                                      Insufficient funds
+                                    </span>
+                                  ))}
                               </div>
 
-                              <input
-                                type="number"
-                                placeholder="0.00"
-                                value={depositAmount}
-                                onChange={(e) =>
-                                  setDepositAmount(e.target.value)
-                                }
-                              />
-                              {!shillBalance ||
-                                (parseInt(depositAmount) >
-                                  parseInt(shillBalance) && (
-                                  <span className="low-funds">
-                                    Insufficient funds
+                              <div className="box-bottom">
+                                <button
+                                  className="cta-btn"
+                                  onClick={() => depositShill()}
+                                >
+                                  Deposit
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                          {poolType === "nft" && (
+                            <div className="box">
+                              <div className="box-content">
+                                <h3>Deposit</h3>
+                                <div className="row">
+                                  <p class="balance">
+                                    <p>
+                                      NFT balance: <>{ownedTokens.length}</>
+                                    </p>
+                                  </p>
+                                  {ownedTokens.length > 0 && (
+                                    <SelectNftDialog
+                                      ownedTokens={ownedTokens}
+                                      selectNft={selectNft}
+                                      resetSelected={resetSelected}
+                                      selectedContract={selectedContract}
+                                      address={walletClient.address}
+                                      updateCantSelectNft={updateCantSelectNft}
+                                    />
+                                  )}
+                                  {/* <span
+                                    onClick={(e) => setMaxDeposit()}
+                                    className="max-deposit"
+                                  >
+                                    MAX
+                                  </span> */}
+                                </div>
+                              </div>
+
+                              <div className="box-bottom">
+                                <p>
+                                  Tokens to Deposit:{" "}
+                                  <span>
+                                    {ownedTokens
+                                      .filter((nft) => nft.isSelected)
+                                      .map((nft, index) => "#" + nft.token_id)
+                                      .join(", ")}
                                   </span>
-                                ))}
+                                </p>
+                                <button
+                                  className="cta-btn"
+                                  onClick={() => depositNfts()}
+                                >
+                                  Deposit
+                                </button>
+                              </div>
                             </div>
-
-                            <div className="box-bottom">
-                              <button
-                                className="cta-btn"
-                                onClick={() => depositShill()}
-                              >
-                                Deposit
-                              </button>
-                            </div>
-                          </div>
-
+                          )}
                           <div className="box">
                             <div className="box-content">
                               <h3>Claim Rewards</h3>
@@ -685,9 +893,16 @@ const AppDashboardPage = ({ title, wClient }) => {
                                 {myInfo.staked && (
                                   <span>
                                     {myInfo.staked.staked_amount > 0
-                                      ? myInfo.staked.staked_amount.slice(0, -6)
+                                      ? poolType === "token"
+                                        ? myInfo.staked.staked_amount.slice(
+                                            0,
+                                            -6
+                                          )
+                                        : myInfo.staked.staked_amount
                                       : "0"}{" "}
-                                    $SHILL
+                                    {poolType === "token" && (
+                                      <span>$SHILL</span>
+                                    )}
                                   </span>
                                 )}
                               </p>
@@ -712,44 +927,6 @@ const AppDashboardPage = ({ title, wClient }) => {
                       </div>
                     </div>
                   )}
-                  {/* 
-                {activePool === 2 && (
-                  <div className="table-box-row">
-                    <div className="content">
-                      <div className="asset">
-                        <img
-                          src="/images/pages/landing-page/nfts-section-img-1.png"
-                          alt=""
-                        />
-
-                        <h3>Shillables NFT</h3>
-                      </div>
-
-                      <p>
-                        <span>
-                          Rewards 24H <br />
-                        </span>{" "}
-                        100.00 NFT(s)
-                      </p>
-
-                      <p>
-                        <span>
-                          Unclaimed <br />
-                        </span>{" "}
-                        100.00 NFT(s)
-                      </p>
-
-                      <p>
-                        <span>
-                          Deposited <br />
-                        </span>{" "}
-                        0.00 NFT(s)
-                      </p>
-
-                      <button>Stake Now</button>
-                    </div>
-                  </div>
-                )} */}
 
                   {activePool >= 2 && (
                     <div className="table-box-row">

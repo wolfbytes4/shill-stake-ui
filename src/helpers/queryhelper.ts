@@ -3,9 +3,6 @@ import { Snip721GetTokensResponse } from "secretjs/dist/extensions/snip721/msg/G
 import { Metadata } from "secretjs/dist/extensions/snip721/types";
 
 export const permitName = "shill.stake";
-export const allowedTokens = [
-  import.meta.env.VITE_APP_STAKE_MANAGER_CONTRACT_ADDRESS,
-];
 export const permissions = ["owner", "balance"];
 
 const chainId = import.meta.env.VITE_APP_CHAIN_ID;
@@ -50,7 +47,7 @@ export const PermitQuery = class {
       signature: any;
     };
   };
-  constructor(query: any, permit: any, chainId: string) {
+  constructor(query: any, permit: any, chainId: string, allowedTokens) {
     this.with_permit = {
       query: query,
       permit: {
@@ -151,7 +148,8 @@ export const queryOwnedTokens = async (
   address: string,
   permit: any,
   contract_address: any,
-  contract_hash: any
+  contract_hash: any,
+  allowedTokens: any
 ) => {
   const query = {
     tokens: {
@@ -159,7 +157,7 @@ export const queryOwnedTokens = async (
       limit: 300,
     },
   };
-  const query2 = new PermitQuery(query, permit, chainId);
+  const query2 = new PermitQuery(query, permit, chainId, allowedTokens);
 
   const data = (await queryWrapper(
     query2,
@@ -211,13 +209,16 @@ export const queryTokenMetadata = async (
 };
 
 export const queryMyInfo = async (permit: any, contract) => {
-  debugger;
+  let allowed_tokens = [contract.contract_info.address];
+  if (contract.staked_info.staking_contract.stake_type === "nft") {
+    allowed_tokens.push(contract.staked_info.staking_contract.address);
+  }
   const query = {
     get_my_staked_info: {
       permit: {
         params: {
           permit_name: permitName,
-          allowed_tokens: [contract.address],
+          allowed_tokens: allowed_tokens,
           chain_id: chainId,
           permissions: permissions,
         },
@@ -225,11 +226,10 @@ export const queryMyInfo = async (permit: any, contract) => {
       },
     },
   };
-  console.log(JSON.stringify(query));
   const data = (await queryWrapper(
     query,
-    contract.address,
-    contract.code_hash
+    contract.contract_info.address,
+    contract.contract_info.code_hash
   )) as any;
   return data;
 };

@@ -1,5 +1,9 @@
 import { SecretNetworkClient } from "secretjs";
-export async function getPermit(address: string, contract_address: string) {
+export async function getPermit(
+  address: string,
+  contract_address: string,
+  nft_address: string
+) {
   let data = localStorage.getItem(
     `shill-stake-permit-${contract_address}-${address}`
   );
@@ -9,6 +13,9 @@ export async function getPermit(address: string, contract_address: string) {
 
   const permitName = "shill.stake";
   const allowedTokens = [contract_address];
+  if (nft_address) {
+    allowedTokens.push(nft_address);
+  }
   const permissions = ["owner", "balance"];
 
   if (!window.keplr) throw "Keplr not found";
@@ -50,7 +57,11 @@ export async function getPermit(address: string, contract_address: string) {
   return signature;
 }
 
-export async function resetPermit(address: string, contract_address: string) {
+export async function resetPermit(
+  address: string,
+  contract_address: string,
+  nft_address: string
+) {
   let data = localStorage.getItem(
     `shill-stake-permit-${contract_address}-${address}`
   );
@@ -62,6 +73,9 @@ export async function resetPermit(address: string, contract_address: string) {
 
   const permitName = "shill.stake";
   const allowedTokens = [contract_address];
+  if (nft_address) {
+    allowedTokens.push(nft_address);
+  }
   const permissions = ["owner", "balance"];
 
   if (!window.keplr) throw "Keplr not found";

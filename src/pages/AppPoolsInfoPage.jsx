@@ -11,7 +11,16 @@ const AppPoolsInfoPage = ({ title, wClient }) => {
   const [contractsInfo, setContractsInfo] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isQueryError, setIsQueryError] = useState(false);
-
+  const images = {
+    SHILL: "/images/pages/app-dashboard-page/hero-section-img-1.png",
+    Shillables: "/images/pages/landing-page/nfts-section-img-1.png",
+    "Wolf Pack Alphas": "/images/pages/landing-page/nfts-section-img-5.png",
+    "Broke Badgers": "/images/pages/landing-page/nfts-section-img-2.png",
+    Alphacas: "/images/pages/landing-page/nfts-section-img-3.png",
+    Boonanas: "/images/pages/landing-page/nfts-section-img-4.png",
+    Bananappeals: "/images/pages/landing-page/nfts-section-img-6.png",
+    "Sly Foxes": "/images/pages/landing-page/nfts-section-img-7.png",
+  };
   const getData = async () => {
     setIsLoading(true);
     await getContractsInfo();
@@ -82,18 +91,28 @@ const AppPoolsInfoPage = ({ title, wClient }) => {
                     <div className="content">
                       <div className="pool">
                         <img
-                          src="/images/pages/app-dashboard-page/hero-section-img-1.png"
+                          src={
+                            images[contract.staked_info.staking_contract.name]
+                          }
                           alt=""
                         />
 
                         <h3>
-                          Shillables Token <br /> ($
+                          Shillables Token <br /> (
+                          {contract.staked_info.staking_contract.stake_type ===
+                          "token"
+                            ? "$"
+                            : ""}
                           {contract.staked_info.staking_contract.name})
                         </h3>
                       </div>
 
                       <p className="secondary">
-                        If you have at least one $
+                        If you have at least one{" "}
+                        {contract.staked_info.staking_contract.stake_type ===
+                        "token"
+                          ? "$"
+                          : ""}
                         {contract.staked_info.staking_contract.name} in your
                         wallet, you can stake and start accruing rewards.
                       </p>
@@ -108,7 +127,10 @@ const AppPoolsInfoPage = ({ title, wClient }) => {
                           : 0}{" "}
                         <br />{" "}
                         <span>
-                          ${contract.staked_info.staking_contract.name}
+                          {contract.staked_info.staking_contract.stake_type ===
+                          "token"
+                            ? "$" + contract.staked_info.staking_contract.name
+                            : ""}
                         </span>
                       </p>
 
