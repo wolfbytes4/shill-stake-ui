@@ -112,127 +112,43 @@ const LandingPage = ({ title }) => {
 
         <div className="slides">
           <div className="slide">
-            <img
-              src="/images/pages/landing-page/nfts-section-img-1.png"
-              alt=""
-            />
-            <img
-              src="/images/pages/landing-page/nfts-section-img-2.png"
-              alt=""
-            />
-            <img
-              src="/images/pages/landing-page/nfts-section-img-3.png"
-              alt=""
-            />
-            <img
-              src="/images/pages/landing-page/nfts-section-img-4.png"
-              alt=""
-            />
-            <img
-              src="/images/pages/landing-page/nfts-section-img-5.png"
-              alt=""
-            />
-            <img
-              src="/images/pages/landing-page/nfts-section-img-6.png"
-              alt=""
-            />
-            <img
-              src="/images/pages/landing-page/nfts-section-img-7.png"
-              alt=""
-            />
+            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
+            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
+            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
+            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
+            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
+            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
+            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
           </div>
 
           <div className="slide">
-            <img
-              src="/images/pages/landing-page/nfts-section-img-1.png"
-              alt=""
-            />
-            <img
-              src="/images/pages/landing-page/nfts-section-img-2.png"
-              alt=""
-            />
-            <img
-              src="/images/pages/landing-page/nfts-section-img-3.png"
-              alt=""
-            />
-            <img
-              src="/images/pages/landing-page/nfts-section-img-4.png"
-              alt=""
-            />
-            <img
-              src="/images/pages/landing-page/nfts-section-img-5.png"
-              alt=""
-            />
-            <img
-              src="/images/pages/landing-page/nfts-section-img-6.png"
-              alt=""
-            />
-            <img
-              src="/images/pages/landing-page/nfts-section-img-7.png"
-              alt=""
-            />
+            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
+            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
+            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
+            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
+            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
+            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
+            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
           </div>
 
           <div className="slide">
-            <img
-              src="/images/pages/landing-page/nfts-section-img-1.png"
-              alt=""
-            />
-            <img
-              src="/images/pages/landing-page/nfts-section-img-2.png"
-              alt=""
-            />
-            <img
-              src="/images/pages/landing-page/nfts-section-img-3.png"
-              alt=""
-            />
-            <img
-              src="/images/pages/landing-page/nfts-section-img-4.png"
-              alt=""
-            />
-            <img
-              src="/images/pages/landing-page/nfts-section-img-5.png"
-              alt=""
-            />
-            <img
-              src="/images/pages/landing-page/nfts-section-img-6.png"
-              alt=""
-            />
-            <img
-              src="/images/pages/landing-page/nfts-section-img-7.png"
-              alt=""
-            />
+            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
+            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
+            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
+            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
+            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
+            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
+            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
           </div>
 
           <div className="slide">
-            <img
-              src="/images/pages/landing-page/nfts-section-img-1.png"
-              alt=""
-            />
-            <img
-              src="/images/pages/landing-page/nfts-section-img-2.png"
-              alt=""
-            />
-            <img
-              src="/images/pages/landing-page/nfts-section-img-3.png"
-              alt=""
-            />
-            <img
-              src="/images/pages/landing-page/nfts-section-img-4.png"
-              alt=""
-            />
-            <img
-              src="/images/pages/landing-page/nfts-section-img-5.png"
-              alt=""
-            />
-            <img
-              src="/images/pages/landing-page/nfts-section-img-6.png"
-              alt=""
-            />
-            <img
-              src="/images/pages/landing-page/nfts-section-img-7.png"
-              alt=""
-            />
+            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
+            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
+            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
+            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
+            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
+            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
+            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
           </div>
         </div>
       </section>
@@ -250,14 +166,12 @@ const LandingPage = ({ title }) => {
       {/* Stake section */}
       <section className="stake-section">
         <div className="container">
-          <h2>Stake in Two Different Ways</h2>
+          <h2>Shillables Token Pool and NFT Pools!</h2>
 
           <div className="boxes">
             <div className="box">
               <div className="content">
-                <h3>
-                  <span>01.</span> Shillables Token Pool
-                </h3>
+                <h3>Shillables Token Pool</h3>
 
                 <p>
                   As long as you have $SHILL in your wallet, you are eligible to
@@ -273,9 +187,7 @@ const LandingPage = ({ title }) => {
 
             <div className="box">
               <div className="content">
-                <h3>
-                  <span>02.</span> NFT Pools
-                </h3>
+                <h3>NFT Pools</h3>
 
                 <p>
                   Eligible NFTs have their own $SHILL farming pool. If you don't
