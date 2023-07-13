@@ -133,13 +133,12 @@ class ImgHandler extends Component {
             (f) =>
               f.trait_type === p.selectedContract.staked_info.trait_restriction
           );
-          p.updateCantSelectNft(p.index, !hasAttribute);
+          p.updateCantSelectNft(token_id, !hasAttribute);
         }
 
         this.setState({ isLoading: false, imgSrc: query.result.imageUrl });
       } else {
         const data = await this.fetchImage();
-        debugger;
         if (data) {
           this.insertImage(
             db,
@@ -152,6 +151,17 @@ class ImgHandler extends Component {
             },
             "nfts"
           );
+
+          if (p.selectedContract.staked_info.trait_restriction) {
+            const attributes = data.attributes;
+            const hasAttribute = attributes.some(
+              (f) =>
+                f.trait_type ===
+                p.selectedContract.staked_info.trait_restriction
+            );
+            p.updateCantSelectNft(token_id, !hasAttribute);
+          }
+
           this.setState({ isLoading: false, imgSrc: data.dataUrl });
         }
       }

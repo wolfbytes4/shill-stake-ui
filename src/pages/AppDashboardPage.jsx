@@ -300,7 +300,6 @@ const AppDashboardPage = ({ title, wClient }) => {
         progress: undefined,
         theme: "dark",
       });
-      debugger;
       getData(true);
     }
   };
@@ -416,7 +415,6 @@ const AppDashboardPage = ({ title, wClient }) => {
   };
 
   const depositNfts = async () => {
-    debugger;
     const selectedTokens = ownedTokens
       .filter((nft) => nft.isSelected)
       .map((nft) => nft.token_id);
@@ -542,7 +540,8 @@ const AppDashboardPage = ({ title, wClient }) => {
       }
     }
   };
-  const selectNft = (index) => {
+  const selectNft = (token_id) => {
+    const index = ownedTokens.map((e) => e.token_id).indexOf(token_id);
     if (!ownedTokens[index].cantSelect) {
       const updatedTokens = [...ownedTokens];
       updatedTokens[index].isSelected = !updatedTokens[index].isSelected;
@@ -557,8 +556,9 @@ const AppDashboardPage = ({ title, wClient }) => {
     setOwnedTokens(updatedTokens);
   };
 
-  const updateCantSelectNft = (index, cantSelect) => {
+  const updateCantSelectNft = (token_id, cantSelect) => {
     const updatedTokens = [...ownedTokens];
+    const index = updatedTokens.map((e) => e.token_id).indexOf(token_id);
     updatedTokens[index].cantSelect = cantSelect;
     setOwnedTokens(updatedTokens);
   };
@@ -576,9 +576,9 @@ const AppDashboardPage = ({ title, wClient }) => {
               <h1>Dashboard</h1>
 
               <p>
-                Provided is an overview of all of your staked positions. Enter
-                into new positions and manage existing positions by depositing,
-                withdrawing, and claiming rewards.
+                Put your NFTs and Shillables Token ($SHILL) to work for you.
+                Check back regularly to see when your favorite NFT's are
+                available to stake!
               </p>
             </div>
             {selectedContract && !isQueryError && (
@@ -865,16 +865,15 @@ const AppDashboardPage = ({ title, wClient }) => {
                           )}
                           <div className="box">
                             <div className="box-content">
-                              <h3>Claim Rewards</h3>
-                            </div>
-
-                            <div className="box-bottom">
+                              <h3>Claim Rewards</h3>{" "}
                               <p>
                                 Unclaimed balance:{" "}
                                 {myInfo.estimated_rewards?.slice(0, -6)}.
                                 {myInfo.estimated_rewards?.slice(-6)} $SHILL
                               </p>
+                            </div>
 
+                            <div className="box-bottom">
                               <button
                                 className="cta-btn"
                                 onClick={() => claimRewards()}

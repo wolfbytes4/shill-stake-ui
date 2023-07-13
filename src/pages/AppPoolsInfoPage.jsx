@@ -38,7 +38,6 @@ const AppPoolsInfoPage = ({ title, wClient }) => {
 
     setIsLoading(false);
     setContractsInfo(data);
-
     return data;
   };
 
@@ -53,10 +52,8 @@ const AppPoolsInfoPage = ({ title, wClient }) => {
           <h1>Pools and Allocation</h1>
 
           <p className="top-desc">
-            Below is a quick reference summary of the available pools and
-            staking limits, <br /> and while your choices depend on what you
-            have in your wallet, we’re happy to <br /> say that there’s an
-            option for everyone.
+            Check back regularly to see new projects added and what their Pool
+            allocation is.
           </p>
           {isQueryError && (
             <div className="query-box">
@@ -106,31 +103,44 @@ const AppPoolsInfoPage = ({ title, wClient }) => {
                           {contract.staked_info.staking_contract.name})
                         </h3>
                       </div>
-
-                      <p className="secondary">
-                        If you have at least one{" "}
-                        {contract.staked_info.staking_contract.stake_type ===
-                        "token"
-                          ? "$"
-                          : ""}
-                        {contract.staked_info.staking_contract.name} in your
-                        wallet, you can stake and start accruing rewards.
-                      </p>
+                      {contract.staked_info.staking_contract.name ===
+                        "SHILL" && (
+                        <p className="secondary">
+                          $SHILL is more than a rewards token for Shillables NFT
+                          Projects, it fuels our ecosystem. Trade it, Stake it,
+                          or use it to mint NFTs.
+                        </p>
+                      )}
+                      {contract.staked_info.staking_contract.name !==
+                        "SHILL" && (
+                        <p className="secondary">
+                          If you have at least one{" "}
+                          {contract.staked_info.staking_contract.stake_type ===
+                          "token"
+                            ? "$"
+                            : ""}
+                          {contract.staked_info.staking_contract.name} in your
+                          wallet, you can stake and start accruing rewards.
+                        </p>
+                      )}
 
                       <p>
                         <span className="hidden">Total Staked:</span>
                         {contract.staked_info.total_staked_amount > 0
-                          ? contract.staked_info.total_staked_amount?.slice(
-                              0,
-                              -6
-                            )
+                          ? contract.staked_info.staking_contract.stake_type ===
+                            "token"
+                            ? contract.staked_info.total_staked_amount?.slice(
+                                0,
+                                -6
+                              )
+                            : contract.staked_info.total_staked_amount
                           : 0}{" "}
                         <br />{" "}
                         <span>
                           {contract.staked_info.staking_contract.stake_type ===
                           "token"
                             ? "$" + contract.staked_info.staking_contract.name
-                            : ""}
+                            : "NFTs"}
                         </span>
                       </p>
 

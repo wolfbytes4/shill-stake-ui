@@ -9,6 +9,15 @@ $darkgrey: #3a3a3a;
     .select-pagination {
         margin-left: 20px;
         margin-top: 5px;
+
+        button {
+            border-color: $bluegreydark;
+            color: white;
+        }
+
+        button.Mui-selected {
+            border-color: $ivory;
+        }
     }
 
     .MuiPaper-root {

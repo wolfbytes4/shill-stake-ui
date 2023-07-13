@@ -174,8 +174,8 @@ const LandingPage = ({ title }) => {
                 <h3>Shillables Token Pool</h3>
 
                 <p>
-                  As long as you have $SHILL in your wallet, you are eligible to
-                  stake it to farm for more $SHILL.
+                  You've earned the rewards or purchased from a DEX, now start
+                  farming more $SHILL
                 </p>
               </div>
 

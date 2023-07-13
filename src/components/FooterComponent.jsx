@@ -12,7 +12,7 @@ const FooterComponent = () => {
           </Link>
 
           <div className="social-links">
-            <a href="" target="_blank">
+            <a href="https://discord.gg/uFnfHUacyJ" target="_blank">
               <svg
                 width="19"
                 height="13"
@@ -27,7 +27,7 @@ const FooterComponent = () => {
               </svg>
             </a>
 
-            <a href="" target="_blank">
+            <a href="https://stashh.io" target="_blank">
               <svg
                 width="18"
                 height="18"
@@ -73,7 +73,7 @@ const FooterComponent = () => {
               </svg>
             </a>
 
-            <a href="" target="_blank">
+            <a href="https://twitter.com/shillstake" target="_blank">
               <svg
                 width="16"
                 height="13"
@@ -101,7 +101,13 @@ const FooterComponent = () => {
 
           <p>
             Contract Address:{" "}
-            <a href="https://" target="_blank">
+            <a
+              href={
+                "https://www.mintscan.io/secret/account/" +
+                import.meta.env.VITE_APP_STAKE_MANAGER_CONTRACT_ADDRESS
+              }
+              target="_blank"
+            >
               {import.meta.env.VITE_APP_STAKE_MANAGER_CONTRACT_ADDRESS.substring(
                 0,
                 8

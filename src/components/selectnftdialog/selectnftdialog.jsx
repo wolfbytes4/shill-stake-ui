@@ -107,7 +107,7 @@ class SimpleDialog extends Component {
               return (
                 <div
                   className="nft-container"
-                  onClick={() => p.selectNft(index)}
+                  onClick={() => p.selectNft(nft.token_id)}
                 >
                   {!nft.cantSelect && !nft.isSelected && (
                     <FontAwesomeIcon icon={faCircle} className="circle-icon" />
