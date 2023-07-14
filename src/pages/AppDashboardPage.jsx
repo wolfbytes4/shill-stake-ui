@@ -266,11 +266,15 @@ const AppDashboardPage = ({ title, wClient }) => {
       theme: "dark",
     });
     const txMsg = { withdraw_funds: {} };
+    let fees = 250000;
+    if (selectedContract.staked_info.staking_contract.stake_type === "nft") {
+      fees = 250000 + 10000 * myInfo.staked.staked_amount;
+    }
     const res = await txWrapper(
       txMsg,
       selectedContract.contract_info.address,
       selectedContract.contract_info.code_hash,
-      250_000,
+      fees,
       true,
       walletClient
     ).catch((err) => {
@@ -445,12 +449,12 @@ const AppDashboardPage = ({ title, wClient }) => {
           ],
         },
       };
-
+      const fees = 250000 + 10000 * selectedTokens.length;
       const res = await txWrapper(
         txMsg,
         selectedContract.staked_info.staking_contract.address,
         selectedContract.staked_info.staking_contract.code_hash,
-        250_000,
+        fees,
         true,
         walletClient
       ).catch((err) => {
@@ -927,14 +931,14 @@ const AppDashboardPage = ({ title, wClient }) => {
                     </div>
                   )}
 
-                  {activePool >= 2 && (
+                  {/* {activePool >= 2 && (
                     <div className="table-box-row">
                       <div className="error">
                         <p>Coming Soon</p>
-                        {/* <p>Currently, your wallet does not show any NFTs</p> */}
+                        <p>Currently, your wallet does not show any NFTs</p>
                       </div>
                     </div>
-                  )}
+                  )} */}
                 </div>
               </div>
             </div>
