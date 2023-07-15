@@ -34,10 +34,13 @@ class ImgHandler extends Component {
     );
     if (
       nftMetaData &&
-      nftMetaData.nft_dossier.public_metadata.extension.media
+      (nftMetaData.nft_dossier.public_metadata.extension.media ||
+        nftMetaData.nft_dossier.public_metadata.extension.external_url)
     ) {
       let data = await fetch(
-        nftMetaData.nft_dossier.public_metadata.extension.media[0].url
+        nftMetaData.nft_dossier.public_metadata.extension.media
+          ? nftMetaData.nft_dossier.public_metadata.extension.media[0].url
+          : nftMetaData.nft_dossier.public_metadata.extension.external_url
       )
         .then((response) => {
           if (response.ok) {

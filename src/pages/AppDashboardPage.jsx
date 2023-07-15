@@ -56,6 +56,8 @@ const AppDashboardPage = ({ title, wClient }) => {
     Boonanas: "/images/pages/landing-page/nfts-section-img-4.png",
     Bananappeals: "/images/pages/landing-page/nfts-section-img-6.png",
     "Sly Foxes": "/images/pages/landing-page/nfts-section-img-7.png",
+    "Ample Agents LLC": "/images/pages/landing-page/AmpleAgents_Pool.Logo.png",
+    Catyclops: "/images/pages/landing-page/Catyclops_Pool.Logo.png",
   };
 
   let contractPermit = null;

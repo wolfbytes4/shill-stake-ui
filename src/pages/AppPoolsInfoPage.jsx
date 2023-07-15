@@ -20,6 +20,8 @@ const AppPoolsInfoPage = ({ title, wClient }) => {
     Boonanas: "/images/pages/landing-page/nfts-section-img-4.png",
     Bananappeals: "/images/pages/landing-page/nfts-section-img-6.png",
     "Sly Foxes": "/images/pages/landing-page/nfts-section-img-7.png",
+    "Ample Agents LLC": "/images/pages/landing-page/AmpleAgents_Pool.Logo.png",
+    Catyclops: "/images/pages/landing-page/Catyclops_Pool.Logo.png",
   };
   const getData = async () => {
     setIsLoading(true);
@@ -94,14 +96,21 @@ const AppPoolsInfoPage = ({ title, wClient }) => {
                           alt=""
                         />
 
-                        <h3>
-                          Shillables Token <br /> (
-                          {contract.staked_info.staking_contract.stake_type ===
-                          "token"
-                            ? "$"
-                            : ""}
-                          {contract.staked_info.staking_contract.name})
-                        </h3>
+                        {contract.staked_info.staking_contract.name ===
+                          "SHILL" && (
+                          <h3>
+                            Shillables Token <br /> (
+                            {contract.staked_info.staking_contract
+                              .stake_type === "token"
+                              ? "$"
+                              : ""}
+                            {contract.staked_info.staking_contract.name})
+                          </h3>
+                        )}
+                        {contract.staked_info.staking_contract.name !==
+                          "SHILL" && (
+                          <h3>{contract.staked_info.staking_contract.name}</h3>
+                        )}
                       </div>
                       {contract.staked_info.staking_contract.name ===
                         "SHILL" && (
