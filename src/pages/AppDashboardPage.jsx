@@ -10,7 +10,7 @@ import {
   queryPaymentTokenBalance,
   queryOwnedTokens,
 } from "../helpers/queryhelper";
-import { txWrapper } from "../helpers/txhelper";
+import { txWrapper, claimBulk } from "../helpers/txhelper";
 import { ToastContainer, toast } from "react-toastify";
 import { getViewingKey, setViewingKey } from "../helpers/wallethelper";
 import "react-toastify/dist/ReactToastify.css";
@@ -18,6 +18,8 @@ import { faKey } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import CircularProgress from "@mui/material/CircularProgress";
 import SelectNftDialog from "../components/selectnftdialog/selectnftdialog";
+import BulkClaimDialog from "../components/BulkClaimDialog";
+
 // App dashboard page
 const AppDashboardPage = ({ title, wClient }) => {
   // Title
@@ -47,6 +49,8 @@ const AppDashboardPage = ({ title, wClient }) => {
   const [isBalanceLoading, setIsBalanceLoading] = useState(true);
   const [depositAmount, setDepositAmount] = useState();
   const [ownedTokens, setOwnedTokens] = useState([]);
+  const [open, setOpen] = useState(false);
+
   const images = {
     SHILL: "/images/pages/app-dashboard-page/hero-section-img-1.png",
     Shillables: "/images/pages/landing-page/nfts-section-img-1.png",
@@ -219,6 +223,60 @@ const AppDashboardPage = ({ title, wClient }) => {
       selectedContract.contract_info.address,
       selectedContract.contract_info.code_hash,
       250_000,
+      true,
+      walletClient
+    ).catch((err) => {
+      toast.dismiss();
+      toast.error(err.message, {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    });
+
+    if (res) {
+      //show success message
+      toast.dismiss();
+      toast.success("Successfully Claimed", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+      getData(true);
+      await loadBalance(
+        selectedContract.staked_info.staking_contract.address,
+        selectedContract.staked_info.staking_contract.code_hash
+      );
+    }
+  };
+
+  const claimBulkRewards = async (sc) => {
+    toast.loading("Claiming", {
+      position: "bottom-right",
+      autoClose: false,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
+
+    const txMsg = { claim_rewards: {} };
+    const res = await claimBulk(
+      txMsg,
+      sc,
+      250000 + 30000 * sc.length,
       true,
       walletClient
     ).catch((err) => {
@@ -568,9 +626,26 @@ const AppDashboardPage = ({ title, wClient }) => {
     updatedTokens[index].cantSelect = cantSelect;
     setOwnedTokens(updatedTokens);
   };
+
+  const handleClose = async (selectedContracts) => {
+    setOpen(false);
+    //bulk claim
+    if (selectedContracts) {
+      claimBulkRewards(selectedContracts);
+    }
+  };
+
+  const openBulkClaimDialog = () => {
+    setOpen(true);
+  };
   return (
     <main className="app-dashboard-page">
       <ToastContainer />
+      <BulkClaimDialog
+        open={open}
+        onClose={handleClose}
+        contracts={contractsInfo}
+      />
       {isLoading && (
         <img src="/images/brand/icon.png" className="loading-icon" />
       )}
@@ -752,6 +827,9 @@ const AppDashboardPage = ({ title, wClient }) => {
                           )}
                         </p>
 
+                        <button onClick={() => openBulkClaimDialog()}>
+                          Bulk Claim
+                        </button>
                         {/* <button>Manage</button> */}
                       </div>
 

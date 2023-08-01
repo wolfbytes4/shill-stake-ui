@@ -123,34 +123,30 @@ export const sendPowerUp = async (
   }
 };
 
-export const sendPackBuild = async (
-  selectedPayment,
-  paymentMsg,
-  wolfMsg,
+export const claimBulk = async (
+  txMsg,
+  contracts,
   gas,
   checkErrors = true,
   walletClient
 ) => {
   try {
-    const wolfSend = new MsgExecuteContract({
-      sender: walletClient.address,
-      contract_address: selectedPayment.address,
-      code_hash: selectedPayment.code_hash,
-      msg: paymentMsg,
+    let claims = [];
+    contracts.forEach((contract) => {
+      claims.push(
+        new MsgExecuteContract({
+          sender: walletClient.address,
+          contract_address: contract.contract_info.address,
+          code_hash: contract.contract_info.code_hash,
+          msg: txMsg,
+        })
+      );
     });
-    const boneSend = new MsgExecuteContract({
-      sender: walletClient.address,
-      contract_address: import.meta.env.VITE_APP_PACK_CONTRACT_ADDRESS,
-      code_hash: import.meta.env.VITE_APP_PACK_CONTRACT_HASH,
-      msg: wolfMsg,
+
+    const response = await walletClient.client.tx.broadcast(claims, {
+      gasLimit: gas,
+      broadcastTimeoutMs: 90_000,
     });
-    const response = await walletClient.client.tx.broadcast(
-      [wolfSend, boneSend],
-      {
-        gasLimit: gas,
-        broadcastTimeoutMs: 90_000,
-      }
-    );
     if (checkErrors) parseTxError(response);
     return response;
   } catch (error) {
