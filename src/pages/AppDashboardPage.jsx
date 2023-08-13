@@ -183,6 +183,18 @@ const AppDashboardPage = ({ title, wClient }) => {
     });
 
     if (myInfo) {
+      if (
+        contract.staked_info.staking_weights &&
+        myInfo.staked.staking_weights
+      ) {
+        contract.staked_info.staking_weights.forEach((weight) => {
+          let userWeight = myInfo.staked.staking_weights.find(
+            (f) => f.weight_trait_type === weight.weight_trait_type
+          );
+          userWeight.percent = (weight.amount / userWeight.amount) * 100;
+        });
+      }
+
       myInfo.percent =
         parseInt(contract.staked_info.total_staked_amount) === 0
           ? 0
@@ -681,6 +693,14 @@ const AppDashboardPage = ({ title, wClient }) => {
                       ? "$" + selectedContract.staked_info.staking_contract.name
                       : ""}
                     <br /> {/* <span>$0.00</span> */}
+                    {selectedContract.staked_info.staking_weights !== null &&
+                      selectedContract.staked_info.staking_weights.map(
+                        (weight, index) => (
+                          <span>
+                            {weight.weight_trait_type}: {weight.amount}
+                          </span>
+                        )
+                      )}
                   </h3>
                 </div>
 
@@ -792,7 +812,18 @@ const AppDashboardPage = ({ title, wClient }) => {
                           <span>
                             % Stake <br />
                           </span>{" "}
-                          {myInfo.percent} %
+                          {myInfo.staked?.staking_weights === null && (
+                            <span>{myInfo.percent}%</span>
+                          )}{" "}
+                          {myInfo.staked?.staking_weights !== null &&
+                            myInfo.staked?.staking_weights.map(
+                              (weight, index) => (
+                                <div>
+                                  {weight.weight_trait_type}: {weight.amount} (
+                                  {weight.percent}%)
+                                </div>
+                              )
+                            )}
                         </p>
 
                         <p>
