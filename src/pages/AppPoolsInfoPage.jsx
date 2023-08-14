@@ -23,6 +23,10 @@ const AppPoolsInfoPage = ({ title, wClient }) => {
     "Ample Agents LLC": "/images/pages/landing-page/AmpleAgents_Pool.Logo.png",
     Catyclops: "/images/pages/landing-page/Catyclops_Pool.Logo.png",
   };
+  const poolInfo = {
+    "Wolf Pack Alphas":
+      "Rewards are weighted based off 50% Pack Ranking and 50% Pack Size",
+  };
   const getData = async () => {
     setIsLoading(true);
     await getContractsInfo();
@@ -130,6 +134,8 @@ const AppPoolsInfoPage = ({ title, wClient }) => {
                             : ""}
                           {contract.staked_info.staking_contract.name} in your
                           wallet, you can stake and start accruing rewards.
+                          &nbsp;
+                          {poolInfo[contract.staked_info.staking_contract.name]}
                         </p>
                       )}
 

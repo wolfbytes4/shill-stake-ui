@@ -19,6 +19,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import CircularProgress from "@mui/material/CircularProgress";
 import SelectNftDialog from "../components/selectnftdialog/selectnftdialog";
 import BulkClaimDialog from "../components/BulkClaimDialog";
+import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
+import { styled } from "@mui/material/styles";
+import { faQuestionCircle } from "@fortawesome/free-regular-svg-icons";
 
 // App dashboard page
 const AppDashboardPage = ({ title, wClient }) => {
@@ -65,6 +68,27 @@ const AppDashboardPage = ({ title, wClient }) => {
   };
 
   let contractPermit = null;
+
+  const HtmlTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+  ))(({ theme }) => ({
+    [`& .${tooltipClasses.tooltip}`]: {
+      backgroundColor: "#f5f5f9",
+      color: "rgba(0, 0, 0, 0.87)",
+      minWidth: 180,
+      fontSize: theme.typography.pxToRem(12),
+      border: "1px solid #dadde9",
+    },
+    [`.reward-box`]: {
+      fontSize: "12px",
+      display: "flex",
+    },
+    [`.reward-label`]: {
+      fontWeight: "bold",
+      flex: 1,
+      color: "rgba(0, 0, 0, 0.5)",
+    },
+  }));
 
   const getData = async (reload) => {
     const wc = await getWalletClient();
@@ -187,12 +211,19 @@ const AppDashboardPage = ({ title, wClient }) => {
         contract.staked_info.staking_weights &&
         myInfo.staked.staking_weights
       ) {
+        myInfo.userPoolPercent = 0;
         contract.staked_info.staking_weights.forEach((weight) => {
           let userWeight = myInfo.staked.staking_weights.find(
             (f) => f.weight_trait_type === weight.weight_trait_type
           );
-          userWeight.percent = (weight.amount / userWeight.amount) * 100;
+          userWeight.percent = (
+            (userWeight.amount / weight.amount) *
+            100
+          ).toFixed(2);
+          myInfo.userPoolPercent +=
+            (userWeight.amount / weight.amount) * weight.weight_percentage;
         });
+        myInfo.userPoolPercent = myInfo.userPoolPercent.toFixed(2);
       }
 
       myInfo.percent =
@@ -677,7 +708,44 @@ const AppDashboardPage = ({ title, wClient }) => {
             {selectedContract && !isQueryError && (
               <div className="stats-right">
                 <div className="box">
-                  <p>Total Staked</p>
+                  <p>
+                    Total Staked{" "}
+                    {selectedContract.staked_info.staking_weights !== null && (
+                      <HtmlTooltip
+                        title={
+                          <>
+                            {selectedContract.staked_info.staking_weights.map(
+                              (weight, index) => (
+                                <>
+                                  <div className="reward-box">
+                                    <div className="reward-label">
+                                      {weight.weight_trait_type}:{" "}
+                                    </div>
+                                    <div className="reward-text">
+                                      {weight.amount}
+                                    </div>
+                                  </div>
+                                  <div className="reward-box">
+                                    <div className="reward-label">
+                                      {weight.weight_trait_type} Weight:{" "}
+                                    </div>
+                                    <div className="reward-text">
+                                      {weight.weight_percentage}%
+                                    </div>
+                                  </div>
+                                </>
+                              )
+                            )}
+                          </>
+                        }
+                      >
+                        <FontAwesomeIcon
+                          icon={faQuestionCircle}
+                          className="tooltip-icon"
+                        />
+                      </HtmlTooltip>
+                    )}
+                  </p>
 
                   <h3>
                     {selectedContract.staked_info.total_staked_amount > 0
@@ -693,14 +761,6 @@ const AppDashboardPage = ({ title, wClient }) => {
                       ? "$" + selectedContract.staked_info.staking_contract.name
                       : ""}
                     <br /> {/* <span>$0.00</span> */}
-                    {selectedContract.staked_info.staking_weights !== null &&
-                      selectedContract.staked_info.staking_weights.map(
-                        (weight, index) => (
-                          <span>
-                            {weight.weight_trait_type}: {weight.amount}
-                          </span>
-                        )
-                      )}
                   </h3>
                 </div>
 
@@ -815,15 +875,33 @@ const AppDashboardPage = ({ title, wClient }) => {
                           {myInfo.staked?.staking_weights === null && (
                             <span>{myInfo.percent}%</span>
                           )}{" "}
-                          {myInfo.staked?.staking_weights !== null &&
-                            myInfo.staked?.staking_weights.map(
-                              (weight, index) => (
-                                <div>
-                                  {weight.weight_trait_type}: {weight.amount} (
-                                  {weight.percent}%)
-                                </div>
-                              )
-                            )}
+                          {myInfo.userPoolPercent}%
+                          {myInfo.staked?.staking_weights !== null && (
+                            <HtmlTooltip
+                              title={
+                                <>
+                                  {myInfo.staked?.staking_weights !== null &&
+                                    myInfo.staked?.staking_weights.map(
+                                      (weight, index) => (
+                                        <div className="reward-box">
+                                          <div className="reward-label">
+                                            {weight.weight_trait_type}:{" "}
+                                          </div>
+                                          <div className="reward-text">
+                                            {weight.amount} ({weight.percent}%)
+                                          </div>
+                                        </div>
+                                      )
+                                    )}
+                                </>
+                              }
+                            >
+                              <FontAwesomeIcon
+                                icon={faQuestionCircle}
+                                className="tooltip-icon"
+                              />
+                            </HtmlTooltip>
+                          )}
                         </p>
 
                         <p>

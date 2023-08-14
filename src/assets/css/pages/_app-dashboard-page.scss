@@ -299,6 +299,11 @@
               box-shadow: 5px 5px 0 $secondary-color;
               border-radius: 35px;
 
+              .tooltip-icon {
+                color: #000;
+                margin-left: 5px;
+              }
+
               .content {
                 width: 100%;
                 padding: 15px 25px 15px 15px;
@@ -499,6 +504,7 @@
                       }
                     }
                   }
+
                 }
               }
 
