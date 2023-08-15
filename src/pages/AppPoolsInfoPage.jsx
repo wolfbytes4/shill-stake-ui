@@ -15,6 +15,7 @@ const AppPoolsInfoPage = ({ title, wClient }) => {
     SHILL: "/images/pages/app-dashboard-page/hero-section-img-1.png",
     Shillables: "/images/pages/landing-page/nfts-section-img-1.png",
     "Wolf Pack Alphas": "/images/pages/landing-page/nfts-section-img-5.png",
+    "Wolf Pack Alphas V2": "/images/pages/landing-page/nfts-section-img-5.png",
     "Broke Badgers": "/images/pages/landing-page/nfts-section-img-2.png",
     Alphacas: "/images/pages/landing-page/nfts-section-img-3.png",
     BooNanas: "/images/pages/landing-page/nfts-section-img-4.png",
@@ -24,7 +25,7 @@ const AppPoolsInfoPage = ({ title, wClient }) => {
     Catyclops: "/images/pages/landing-page/Catyclops_Pool.Logo.png",
   };
   const poolInfo = {
-    "Wolf Pack Alphas":
+    "Wolf Pack Alphas V2":
       "Rewards are weighted based off 50% Pack Ranking and 50% Pack Size",
   };
   const getData = async () => {

@@ -58,6 +58,7 @@ const AppDashboardPage = ({ title, wClient }) => {
     SHILL: "/images/pages/app-dashboard-page/hero-section-img-1.png",
     Shillables: "/images/pages/landing-page/nfts-section-img-1.png",
     "Wolf Pack Alphas": "/images/pages/landing-page/nfts-section-img-5.png",
+    "Wolf Pack Alphas V2": "/images/pages/landing-page/nfts-section-img-5.png",
     "Broke Badgers": "/images/pages/landing-page/nfts-section-img-2.png",
     Alphacas: "/images/pages/landing-page/nfts-section-img-3.png",
     BooNanas: "/images/pages/landing-page/nfts-section-img-4.png",
@@ -216,12 +217,14 @@ const AppDashboardPage = ({ title, wClient }) => {
           let userWeight = myInfo.staked.staking_weights.find(
             (f) => f.weight_trait_type === weight.weight_trait_type
           );
-          userWeight.percent = (
-            (userWeight.amount / weight.amount) *
-            100
-          ).toFixed(2);
-          myInfo.userPoolPercent +=
-            (userWeight.amount / weight.amount) * weight.weight_percentage;
+          if (userWeight) {
+            userWeight.percent = (
+              (userWeight.amount / weight.amount) *
+              100
+            ).toFixed(2);
+            myInfo.userPoolPercent +=
+              (userWeight.amount / weight.amount) * weight.weight_percentage;
+          }
         });
         myInfo.userPoolPercent = myInfo.userPoolPercent.toFixed(2);
       }
@@ -872,36 +875,40 @@ const AppDashboardPage = ({ title, wClient }) => {
                           <span>
                             % Stake <br />
                           </span>{" "}
-                          {myInfo.staked?.staking_weights === null && (
-                            <span>{myInfo.percent}%</span>
+                          {!myInfo.staked?.staking_weights && (
+                            <>{myInfo.percent}%</>
                           )}{" "}
-                          {myInfo.userPoolPercent}%
-                          {myInfo.staked?.staking_weights !== null && (
-                            <HtmlTooltip
-                              title={
-                                <>
-                                  {myInfo.staked?.staking_weights !== null &&
-                                    myInfo.staked?.staking_weights.map(
-                                      (weight, index) => (
-                                        <div className="reward-box">
-                                          <div className="reward-label">
-                                            {weight.weight_trait_type}:{" "}
+                          {myInfo.staked?.staking_weights && (
+                            <>{myInfo.userPoolPercent}%</>
+                          )}{" "}
+                          {myInfo.staked?.staking_weights !== null &&
+                            myInfo.staked?.staking_weights?.length > 0 && (
+                              <HtmlTooltip
+                                title={
+                                  <>
+                                    {myInfo.staked?.staking_weights !== null &&
+                                      myInfo.staked?.staking_weights.map(
+                                        (weight, index) => (
+                                          <div className="reward-box">
+                                            <div className="reward-label">
+                                              {weight.weight_trait_type}:{" "}
+                                            </div>
+                                            <div className="reward-text">
+                                              {weight.amount} ({weight.percent}
+                                              %)
+                                            </div>
                                           </div>
-                                          <div className="reward-text">
-                                            {weight.amount} ({weight.percent}%)
-                                          </div>
-                                        </div>
-                                      )
-                                    )}
-                                </>
-                              }
-                            >
-                              <FontAwesomeIcon
-                                icon={faQuestionCircle}
-                                className="tooltip-icon"
-                              />
-                            </HtmlTooltip>
-                          )}
+                                        )
+                                      )}
+                                  </>
+                                }
+                              >
+                                <FontAwesomeIcon
+                                  icon={faQuestionCircle}
+                                  className="tooltip-icon"
+                                />
+                              </HtmlTooltip>
+                            )}
                         </p>
 
                         <p>
