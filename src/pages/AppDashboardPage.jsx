@@ -47,6 +47,7 @@ const AppDashboardPage = ({ title, wClient }) => {
   const [isQueryError, setIsQueryError] = useState(false);
 
   const [hasVk, setHasVk] = useState(false);
+  const [hasRewards, setHasRewards] = useState(false);
   const [shillBalance, setShillBalance] = useState();
   const [hasBalanceError, setHasBalanceError] = useState(false);
   const [isBalanceLoading, setIsBalanceLoading] = useState(true);
@@ -185,7 +186,7 @@ const AppDashboardPage = ({ title, wClient }) => {
     let queryError = false;
     let myInfo = null;
     let permitError = false;
-
+    let hasR = false;
     // const permit = await getPermit(
     //   wc.address,
     //   contract.contract_info.address
@@ -238,7 +239,7 @@ const AppDashboardPage = ({ title, wClient }) => {
       myInfo.percent = myInfo.percent
         ? myInfo.percent.toFixed(2)
         : myInfo.percent;
-      debugger;
+
       if (contract.staked_info.reward_contracts) {
         contract.staked_info.reward_contracts.forEach((reward_contract) => {
           let estimated_reward = myInfo.estimated_rewards.find(
@@ -249,6 +250,9 @@ const AppDashboardPage = ({ title, wClient }) => {
             parseInt(reward_contract.total_rewards)
               ? estimated_reward.estimated_rewards
               : "0";
+          if (!hasR) {
+            hasR = estimated_reward.estimated_rewards !== "0" ? true : false;
+          }
         });
       } else {
         if (myInfo.estimated_rewards && contract.staked_info.total_rewards) {
@@ -257,6 +261,7 @@ const AppDashboardPage = ({ title, wClient }) => {
             parseInt(contract.staked_info.total_rewards)
               ? myInfo.estimated_rewards
               : "0";
+          hasR = myInfo.estimated_rewards !== "0" ? true : false;
         }
       }
     }
@@ -264,6 +269,7 @@ const AppDashboardPage = ({ title, wClient }) => {
     setIsPermitError(permitError);
     setIsQueryError(queryError);
     setMyInfo(myInfo);
+    setHasRewards(hasR);
   };
 
   const claimRewards = async () => {
@@ -954,7 +960,9 @@ const AppDashboardPage = ({ title, wClient }) => {
                               {myInfo.estimated_rewards?.slice(-6)} $SHILL
                             </Fragment>
                           ) : (
-                            <Fragment>Multiple</Fragment>
+                            <Fragment>
+                              {hasRewards ? <>Multiple</> : <></>}
+                            </Fragment>
                           )}
                         </p>
 
