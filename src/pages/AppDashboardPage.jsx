@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import {
   resetPermit,
   getWalletClient,
@@ -238,12 +238,26 @@ const AppDashboardPage = ({ title, wClient }) => {
       myInfo.percent = myInfo.percent
         ? myInfo.percent.toFixed(2)
         : myInfo.percent;
-      if (myInfo.estimated_rewards && contract.staked_info.total_rewards) {
-        myInfo.estimated_rewards =
-          parseInt(myInfo.estimated_rewards) <
-          parseInt(contract.staked_info.total_rewards)
-            ? myInfo.estimated_rewards
-            : "0";
+      debugger;
+      if (contract.staked_info.reward_contracts) {
+        contract.staked_info.reward_contracts.forEach((reward_contract) => {
+          let estimated_reward = myInfo.estimated_rewards.find(
+            (f) => f.reward_contract_name === reward_contract.name
+          );
+          estimated_reward.estimated_rewards =
+            parseInt(estimated_reward.estimated_rewards) <
+            parseInt(reward_contract.total_rewards)
+              ? estimated_reward.estimated_rewards
+              : "0";
+        });
+      } else {
+        if (myInfo.estimated_rewards && contract.staked_info.total_rewards) {
+          myInfo.estimated_rewards =
+            parseInt(myInfo.estimated_rewards) <
+            parseInt(contract.staked_info.total_rewards)
+              ? myInfo.estimated_rewards
+              : "0";
+        }
       }
     }
     //}
@@ -761,7 +775,7 @@ const AppDashboardPage = ({ title, wClient }) => {
                       : 0}{" "}
                     {selectedContract.staked_info.staking_contract
                       .stake_type === "token"
-                      ? "$" + selectedContract.staked_info.staking_contract.name
+                      ? "$" + selectedContract.contract_info.name
                       : ""}
                     <br /> {/* <span>$0.00</span> */}
                   </h3>
@@ -772,15 +786,34 @@ const AppDashboardPage = ({ title, wClient }) => {
 
                   <h3>
                     {selectedContract.staked_info.reward_contract && (
-                      <div>
-                        {selectedContract.staked_info.reward_contract.rewards_per_day.slice(
-                          0,
-                          -6
-                        )}{" "}
-                        $SHILL/day
-                      </div>
+                      <>
+                        <div>
+                          {selectedContract.staked_info.reward_contract.rewards_per_day.slice(
+                            0,
+                            -6
+                          )}{" "}
+                          $SHILL/day
+                        </div>
+
+                        <br />
+                      </>
                     )}
-                    <br />
+                    {selectedContract.staked_info.reward_contracts &&
+                      selectedContract.staked_info.reward_contracts.map(
+                        (contract, index) => (
+                          <div
+                            className={
+                              selectedContract.staked_info.reward_contracts
+                                .length > 1
+                                ? "emissions"
+                                : "emissions-one"
+                            }
+                          >
+                            <div>{contract.rewards_per_day.slice(0, -6)}</div>{" "}
+                            <span>${contract.name}/day</span>
+                          </div>
+                        )
+                      )}
                     {/* <span>$0.00</span> */}
                   </h3>
                 </div>
@@ -821,7 +854,7 @@ const AppDashboardPage = ({ title, wClient }) => {
                       className={activePool === index && "active"}
                     >
                       {contract.contract_info.stake_type === "token" ? "$" : ""}
-                      {contract.staked_info.staking_contract.name}
+                      {contract.contract_info.name}
                     </button>
                   ))}
                 </div>
@@ -875,12 +908,12 @@ const AppDashboardPage = ({ title, wClient }) => {
                           <span>
                             % Stake <br />
                           </span>{" "}
-                          {!myInfo.staked?.staking_weights && (
-                            <>{myInfo.percent}%</>
-                          )}{" "}
-                          {myInfo.staked?.staking_weights && (
+                          {myInfo.staked?.staking_weights &&
+                          myInfo.staked?.staking_weights.length > 0 ? (
                             <>{myInfo.userPoolPercent}%</>
-                          )}{" "}
+                          ) : (
+                            <>{myInfo.percent}%</>
+                          )}
                           {myInfo.staked?.staking_weights !== null &&
                             myInfo.staked?.staking_weights?.length > 0 && (
                               <HtmlTooltip
@@ -915,8 +948,14 @@ const AppDashboardPage = ({ title, wClient }) => {
                           <span>
                             Unclaimed <br />
                           </span>{" "}
-                          {myInfo.estimated_rewards?.slice(0, -6)}.
-                          {myInfo.estimated_rewards?.slice(-6)} $SHILL
+                          {!Array.isArray(myInfo.estimated_rewards) ? (
+                            <Fragment>
+                              {myInfo.estimated_rewards?.slice(0, -6)}.
+                              {myInfo.estimated_rewards?.slice(-6)} $SHILL
+                            </Fragment>
+                          ) : (
+                            <Fragment>Multiple</Fragment>
+                          )}
                         </p>
 
                         <p>
@@ -1068,9 +1107,27 @@ const AppDashboardPage = ({ title, wClient }) => {
                               <h3>Claim Rewards</h3>{" "}
                               <p>
                                 Unclaimed balance:{" "}
-                                {myInfo.estimated_rewards?.slice(0, -6)}.
-                                {myInfo.estimated_rewards?.slice(-6)} $SHILL
+                                {!Array.isArray(myInfo.estimated_rewards) && (
+                                  <Fragment>
+                                    {myInfo.estimated_rewards?.slice(0, -6)}.
+                                    {myInfo.estimated_rewards?.slice(-6)} $SHILL
+                                  </Fragment>
+                                )}
                               </p>
+                              {Array.isArray(myInfo.estimated_rewards) &&
+                                myInfo?.estimated_rewards.map(
+                                  (reward, index) => (
+                                    <div className="reward-box">
+                                      <div className="reward-label">
+                                        ${reward.reward_contract_name}:{" "}
+                                      </div>
+                                      <div className="reward-text">
+                                        {reward.estimated_rewards?.slice(0, -6)}
+                                        .{reward.estimated_rewards?.slice(-6)}
+                                      </div>
+                                    </div>
+                                  )
+                                )}
                             </div>
 
                             <div className="box-bottom">

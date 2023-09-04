@@ -94,49 +94,39 @@ const AppPoolsInfoPage = ({ title, wClient }) => {
                   <div className="table-box-row">
                     <div className="content">
                       <div className="pool">
-                        <img
-                          src={
-                            images[contract.staked_info.staking_contract.name]
-                          }
-                          alt=""
-                        />
+                        <img src={images[contract.contract_info.name]} alt="" />
 
-                        {contract.staked_info.staking_contract.name ===
-                          "SHILL" && (
+                        {contract.contract_info.name === "SHILL" && (
                           <h3>
                             Shillables Token <br /> (
                             {contract.staked_info.staking_contract
                               .stake_type === "token"
                               ? "$"
                               : ""}
-                            {contract.staked_info.staking_contract.name})
+                            {contract.contract_info.name})
                           </h3>
                         )}
-                        {contract.staked_info.staking_contract.name !==
-                          "SHILL" && (
-                          <h3>{contract.staked_info.staking_contract.name}</h3>
+                        {contract.contract_info.name !== "SHILL" && (
+                          <h3>{contract.contract_info.name}</h3>
                         )}
                       </div>
-                      {contract.staked_info.staking_contract.name ===
-                        "SHILL" && (
+                      {contract.contract_info.name === "SHILL" && (
                         <p className="secondary">
                           $SHILL is more than a rewards token for Shillables NFT
                           Projects, it fuels our ecosystem. Trade it, Stake it,
                           or use it to mint NFTs.
                         </p>
                       )}
-                      {contract.staked_info.staking_contract.name !==
-                        "SHILL" && (
+                      {contract.contract_info.name !== "SHILL" && (
                         <p className="secondary">
                           If you have at least one{" "}
                           {contract.staked_info.staking_contract.stake_type ===
                           "token"
                             ? "$"
                             : ""}
-                          {contract.staked_info.staking_contract.name} in your
-                          wallet, you can stake and start accruing rewards.
-                          &nbsp;
-                          {poolInfo[contract.staked_info.staking_contract.name]}
+                          {contract.contract_info.name} in your wallet, you can
+                          stake and start accruing rewards. &nbsp;
+                          {poolInfo[contract.contract_info.name]}
                         </p>
                       )}
 
@@ -155,18 +145,33 @@ const AppPoolsInfoPage = ({ title, wClient }) => {
                         <span>
                           {contract.staked_info.staking_contract.stake_type ===
                           "token"
-                            ? "$" + contract.staked_info.staking_contract.name
+                            ? "$" + contract.contract_info.name
                             : "NFTs"}
                         </span>
                       </p>
 
                       <p>
                         <span className="hidden">Rewards Emissions:</span>
-                        {contract.staked_info.reward_contract.rewards_per_day.slice(
-                          0,
-                          -6
-                        )}{" "}
-                        <br /> <span>$SHILL/day</span>
+                        {contract.staked_info.reward_contract && (
+                          <>
+                            {contract.staked_info.reward_contract.rewards_per_day.slice(
+                              0,
+                              -6
+                            )}{" "}
+                            <br /> <span>$SHILL/day</span>
+                          </>
+                        )}
+                        {contract.staked_info.reward_contracts &&
+                          contract.staked_info.reward_contracts.map(
+                            (contract, index) => (
+                              <>
+                                <div>
+                                  {contract.rewards_per_day.slice(0, -6)}
+                                </div>{" "}
+                                <span>${contract.name}/day</span>
+                              </>
+                            )
+                          )}
                       </p>
 
                       {/* <p>

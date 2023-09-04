@@ -112,43 +112,159 @@ const LandingPage = ({ title }) => {
 
         <div className="slides">
           <div className="slide">
-            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
-            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
-            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
-            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
-            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
-            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
-            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
+            <img
+              src="/images/pages/landing-page/nfts-section-img-1.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/nfts-section-img-2.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/nfts-section-img-3.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/nfts-section-img-4.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/nfts-section-img-5.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/nfts-section-img-6.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/nfts-section-img-7.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/AmpleAgents_Pool.Logo.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/Catyclops_Pool.Logo.png"
+              alt=""
+            />
           </div>
 
           <div className="slide">
-            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
-            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
-            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
-            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
-            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
-            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
-            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
+            <img
+              src="/images/pages/landing-page/nfts-section-img-1.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/nfts-section-img-2.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/nfts-section-img-3.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/nfts-section-img-4.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/nfts-section-img-5.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/nfts-section-img-6.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/nfts-section-img-7.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/AmpleAgents_Pool.Logo.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/Catyclops_Pool.Logo.png"
+              alt=""
+            />
           </div>
 
           <div className="slide">
-            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
-            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
-            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
-            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
-            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
-            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
-            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
+            <img
+              src="/images/pages/landing-page/nfts-section-img-1.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/nfts-section-img-2.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/nfts-section-img-3.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/nfts-section-img-4.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/nfts-section-img-5.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/nfts-section-img-6.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/nfts-section-img-7.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/AmpleAgents_Pool.Logo.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/Catyclops_Pool.Logo.png"
+              alt=""
+            />
           </div>
 
           <div className="slide">
-            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
-            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
-            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
-            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
-            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
-            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
-            <img src="/images/pages/landing-page/nft-soon-img.png" alt="" />
+            <img
+              src="/images/pages/landing-page/nfts-section-img-1.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/nfts-section-img-2.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/nfts-section-img-3.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/nfts-section-img-4.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/nfts-section-img-5.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/nfts-section-img-6.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/nfts-section-img-7.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/AmpleAgents_Pool.Logo.png"
+              alt=""
+            />
+            <img
+              src="/images/pages/landing-page/Catyclops_Pool.Logo.png"
+              alt=""
+            />
           </div>
         </div>
       </section>
