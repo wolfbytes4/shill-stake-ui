@@ -1121,21 +1121,44 @@ const AppDashboardPage = ({ title, wClient }) => {
                                     {myInfo.estimated_rewards?.slice(-6)} $SHILL
                                   </Fragment>
                                 )}
+                                {Array.isArray(myInfo.estimated_rewards) &&
+                                  myInfo?.estimated_rewards.map(
+                                    (reward, index) => (
+                                      <>
+                                        {myInfo.estimated_rewards.length ===
+                                        1 ? (
+                                          <>
+                                            {reward.estimated_rewards?.slice(
+                                              0,
+                                              -6
+                                            )}
+                                            .
+                                            {reward.estimated_rewards?.slice(
+                                              -6
+                                            )}{" "}
+                                            ${reward.reward_contract_name}{" "}
+                                          </>
+                                        ) : (
+                                          <div className="reward-box">
+                                            <div className="reward-label">
+                                              ${reward.reward_contract_name}:{" "}
+                                            </div>
+                                            <div className="reward-text">
+                                              {reward.estimated_rewards?.slice(
+                                                0,
+                                                -6
+                                              )}
+                                              .
+                                              {reward.estimated_rewards?.slice(
+                                                -6
+                                              )}
+                                            </div>
+                                          </div>
+                                        )}
+                                      </>
+                                    )
+                                  )}
                               </p>
-                              {Array.isArray(myInfo.estimated_rewards) &&
-                                myInfo?.estimated_rewards.map(
-                                  (reward, index) => (
-                                    <div className="reward-box">
-                                      <div className="reward-label">
-                                        ${reward.reward_contract_name}:{" "}
-                                      </div>
-                                      <div className="reward-text">
-                                        {reward.estimated_rewards?.slice(0, -6)}
-                                        .{reward.estimated_rewards?.slice(-6)}
-                                      </div>
-                                    </div>
-                                  )
-                                )}
                             </div>
 
                             <div className="box-bottom">
