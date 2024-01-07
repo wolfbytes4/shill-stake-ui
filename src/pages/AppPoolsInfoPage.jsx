@@ -22,7 +22,10 @@ const AppPoolsInfoPage = ({ title, wClient }) => {
     BananAppeals: "/images/pages/landing-page/nfts-section-img-6.png",
     "Sly Foxes": "/images/pages/landing-page/nfts-section-img-7.png",
     "Ample Agents LLC": "/images/pages/landing-page/AmpleAgents_Pool.Logo.png",
+    "Ample Agents LLC V2":
+      "/images/pages/landing-page/AmpleAgents_Pool.Logo.png",
     Catyclops: "/images/pages/landing-page/Catyclops_Pool.Logo.png",
+    "Mad Memes": "/images/pages/landing-page/Mad_Memes_Logo.png",
   };
   const poolInfo = {
     "Wolf Pack Alphas V2":
@@ -154,10 +157,16 @@ const AppPoolsInfoPage = ({ title, wClient }) => {
                         <span className="hidden">Rewards Emissions:</span>
                         {contract.staked_info.reward_contract && (
                           <>
-                            {contract.staked_info.reward_contract.rewards_per_day.slice(
-                              0,
-                              -6
-                            )}{" "}
+                            {contract.staked_info.total_rewards !== "0" ? (
+                              <>
+                                {contract.staked_info.reward_contract.rewards_per_day.slice(
+                                  0,
+                                  -6
+                                )}
+                              </>
+                            ) : (
+                              <>0</>
+                            )}
                             <br /> <span>$SHILL/day</span>
                           </>
                         )}
@@ -165,9 +174,13 @@ const AppPoolsInfoPage = ({ title, wClient }) => {
                           contract.staked_info.reward_contracts.map(
                             (contract, index) => (
                               <>
-                                <div>
-                                  {contract.rewards_per_day.slice(0, -6)}
-                                </div>{" "}
+                                {contract.total_rewards !== "0" ? (
+                                  <div>
+                                    {contract.rewards_per_day.slice(0, -6)}
+                                  </div>
+                                ) : (
+                                  <div>0</div>
+                                )}
                                 <span>${contract.name}/day</span>
                               </>
                             )

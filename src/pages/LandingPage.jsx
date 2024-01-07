@@ -148,6 +148,7 @@ const LandingPage = ({ title }) => {
               src="/images/pages/landing-page/Catyclops_Pool.Logo.png"
               alt=""
             />
+            <img src="/images/pages/landing-page/Mad_Memes_Logo.png" alt="" />
           </div>
 
           <div className="slide">
@@ -187,6 +188,7 @@ const LandingPage = ({ title }) => {
               src="/images/pages/landing-page/Catyclops_Pool.Logo.png"
               alt=""
             />
+            <img src="/images/pages/landing-page/Mad_Memes_Logo.png" alt="" />
           </div>
 
           <div className="slide">
@@ -226,6 +228,7 @@ const LandingPage = ({ title }) => {
               src="/images/pages/landing-page/Catyclops_Pool.Logo.png"
               alt=""
             />
+            <img src="/images/pages/landing-page/Mad_Memes_Logo.png" alt="" />
           </div>
 
           <div className="slide">
@@ -265,6 +268,7 @@ const LandingPage = ({ title }) => {
               src="/images/pages/landing-page/Catyclops_Pool.Logo.png"
               alt=""
             />
+            <img src="/images/pages/landing-page/Mad_Memes_Logo.png" alt="" />
           </div>
         </div>
       </section>

@@ -48,6 +48,7 @@ const AppDashboardPage = ({ title, wClient }) => {
 
   const [hasVk, setHasVk] = useState(false);
   const [hasRewards, setHasRewards] = useState(false);
+  const [contractHasRewards, setContractHasRewards] = useState(false);
   const [shillBalance, setShillBalance] = useState();
   const [hasBalanceError, setHasBalanceError] = useState(false);
   const [isBalanceLoading, setIsBalanceLoading] = useState(true);
@@ -66,7 +67,10 @@ const AppDashboardPage = ({ title, wClient }) => {
     BananAppeals: "/images/pages/landing-page/nfts-section-img-6.png",
     "Sly Foxes": "/images/pages/landing-page/nfts-section-img-7.png",
     "Ample Agents LLC": "/images/pages/landing-page/AmpleAgents_Pool.Logo.png",
+    "Ample Agents LLC V2":
+      "/images/pages/landing-page/AmpleAgents_Pool.Logo.png",
     Catyclops: "/images/pages/landing-page/Catyclops_Pool.Logo.png",
+    "Mad Memes": "/images/pages/landing-page/Mad_Memes_Logo.png",
   };
 
   let contractPermit = null;
@@ -793,14 +797,17 @@ const AppDashboardPage = ({ title, wClient }) => {
                   <h3>
                     {selectedContract.staked_info.reward_contract && (
                       <>
-                        <div>
-                          {selectedContract.staked_info.reward_contract.rewards_per_day.slice(
-                            0,
-                            -6
-                          )}{" "}
-                          $SHILL/day
-                        </div>
-
+                        {selectedContract.staked_info.total_rewards !== "0" ? (
+                          <div>
+                            {selectedContract.staked_info.reward_contract.rewards_per_day.slice(
+                              0,
+                              -6
+                            )}{" "}
+                            $SHILL/day
+                          </div>
+                        ) : (
+                          <div>0 $SHILL/day</div>
+                        )}
                         <br />
                       </>
                     )}
@@ -815,7 +822,11 @@ const AppDashboardPage = ({ title, wClient }) => {
                                 : "emissions-one"
                             }
                           >
-                            <div>{contract.rewards_per_day.slice(0, -6)}</div>{" "}
+                            {contract.rewards_per_day.total_rewards !== "0" ? (
+                              <div>{contract.rewards_per_day.slice(0, -6)}</div>
+                            ) : (
+                              <div>0</div>
+                            )}
                             <span>${contract.name}/day</span>
                           </div>
                         )
