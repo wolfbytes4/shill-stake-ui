@@ -128,6 +128,7 @@ class ImgHandler extends Component {
     let query = index.get(token_id + "||" + table);
 
     query.onsuccess = async (event) => {
+      debugger;
       if (query.result && query.result.imageUrl) {
         db.close();
         if (p.selectedContract.staked_info.trait_restriction) {
@@ -141,6 +142,7 @@ class ImgHandler extends Component {
 
         this.setState({ isLoading: false, imgSrc: query.result.imageUrl });
       } else {
+        debugger;
         const data = await this.fetchImage();
         if (data) {
           this.insertImage(

@@ -80,7 +80,9 @@ const NavigationBarComponent = () => {
           </button>
         )}
 
-        {pathName === "/app/dashboard" || pathName === "/app/pools-info" ? (
+        {pathName === "/app/dashboard" ||
+        pathName === "/app/pools-info" ||
+        pathName === "/app/whitelist" ? (
           <div className="app-nav">
             <button
               onClick={() => {
@@ -98,6 +100,15 @@ const NavigationBarComponent = () => {
               className={pathName === "/app/pools-info" && "active"}
             >
               Pools Info
+            </button>
+
+            <button
+              onClick={() => {
+                navigate("/app/whitelist");
+              }}
+              className={pathName === "/app/whitelist" && "active"}
+            >
+              Whitelist
             </button>
           </div>
         ) : null}

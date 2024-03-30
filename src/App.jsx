@@ -12,7 +12,9 @@ import LandingPage from "./pages/LandingPage";
 import AppPage from "./pages/AppPage";
 import AppDashboardPage from "./pages/AppDashboardPage";
 import AppPoolsInfoPage from "./pages/AppPoolsInfoPage";
+import AppWhitelistPage from "./pages/AppWhitelistPage";
 import WalletChangeDialog from "./components/WalletChangeDialog";
+
 // App
 const App = () => {
   const [open, setOpen] = useState(false);
@@ -73,6 +75,17 @@ const App = () => {
           element={
             <AppPoolsInfoPage
               title={"App > Pools Info - ShillStake"}
+              wClient={walletClient}
+            />
+          }
+        />
+
+        {/* Whitelist page */}
+        <Route
+          path="/app/whitelist"
+          element={
+            <AppWhitelistPage
+              title={"App > Whitelist - ShillStake"}
               wClient={walletClient}
             />
           }

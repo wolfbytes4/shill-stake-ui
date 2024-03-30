@@ -203,3 +203,46 @@ export const transferWolf = async (
     }
   }
 };
+
+export const whitelist = async (
+  setWhitelistMsg,
+  collectAddressMsg,
+  gas,
+  checkErrors = true,
+  walletClient
+) => {
+  try {
+    const whitelistSend = new MsgExecuteContract({
+      sender: walletClient.address,
+      contract_address: import.meta.env.VITE_APP_CATYCLOPS_CONTRACT_ADDRESS,
+      code_hash: import.meta.env.VITE_APP_CATYCLOPS_CONTRACT_HASH,
+      msg: setWhitelistMsg,
+    });
+    const collectAddressSend = new MsgExecuteContract({
+      sender: walletClient.address,
+      contract_address: import.meta.env.VITE_APP_COLLECTION_CONTRACT_ADDRESS,
+      code_hash: import.meta.env.VITE_APP_COLLECTION_CONTRACT_HASH,
+      msg: collectAddressMsg,
+    });
+    const response = await walletClient.client.tx.broadcast(
+      [whitelistSend, collectAddressSend],
+      {
+        gasLimit: gas,
+        broadcastTimeoutMs: 90_000,
+      }
+    );
+    if (checkErrors) parseTxError(response);
+    return response;
+  } catch (error) {
+    console.error(error);
+    if (
+      error.toString().includes("Network Error") ||
+      error.toString().includes("503") ||
+      error.toString().includes("Response closed without headers")
+    ) {
+      throw "Failed to access network. The node may be experiencing issues.";
+    } else {
+      throw error;
+    }
+  }
+};
