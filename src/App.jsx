@@ -82,7 +82,7 @@ const App = () => {
 
         {/* Whitelist page */}
         <Route
-          path="/app/whitelist"
+          path="/app/whitelist-catyclops"
           element={
             <AppWhitelistPage
               title={"App > Whitelist - ShillStake"}

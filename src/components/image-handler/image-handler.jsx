@@ -39,7 +39,10 @@ class ImgHandler extends Component {
     ) {
       let data = await fetch(
         nftMetaData.nft_dossier.public_metadata.extension.media
-          ? nftMetaData.nft_dossier.public_metadata.extension.media[0].url
+          ? nftMetaData.nft_dossier.public_metadata.extension.media[0].url.replace(
+              "ipfs.io",
+              "nftstorage.link"
+            )
           : nftMetaData.nft_dossier.public_metadata.extension.external_url
       )
         .then((response) => {
@@ -128,7 +131,6 @@ class ImgHandler extends Component {
     let query = index.get(token_id + "||" + table);
 
     query.onsuccess = async (event) => {
-      debugger;
       if (query.result && query.result.imageUrl) {
         db.close();
         if (p.selectedContract.staked_info.trait_restriction) {
@@ -142,7 +144,6 @@ class ImgHandler extends Component {
 
         this.setState({ isLoading: false, imgSrc: query.result.imageUrl });
       } else {
-        debugger;
         const data = await this.fetchImage();
         if (data) {
           this.insertImage(
